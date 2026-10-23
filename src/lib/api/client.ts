@@ -1,6 +1,14 @@
 import type { AccessTokenResponse, ApiErrorBody } from "@/types/api";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api";
+// Keep the localhost default for local development only. A production deployment without an
+// API URL should still render the frontend and report a clear, controlled error for API actions.
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  (process.env.NODE_ENV === "development" ? "http://localhost:8000/api" : "")
+).replace(/\/+$/, "");
+
+const API_NOT_CONFIGURED_MESSAGE =
+  "The SupportAI API is not configured for this deployment. Please try again later.";
 
 /**
  * ApiError carries the HTTP status and the backend's `detail` message (D033) so callers can
@@ -95,6 +103,10 @@ export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
  * onAuthExpired() so the app can redirect to /login - it does NOT loop.
  */
 export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
+  if (!API_BASE_URL) {
+    throw new ApiError(503, API_NOT_CONFIGURED_MESSAGE);
+  }
+
   const { body, skipAuthRetry, headers, ...rest } = options;
   const isFormData = body instanceof FormData;
 
