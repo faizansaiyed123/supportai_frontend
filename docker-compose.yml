@@ -1,0 +1,36 @@
+# Standalone Docker setup for the frontend repository.
+#
+#     docker compose up --build
+#
+# The backend is a SEPARATE repository with its own compose file, so it is not started here.
+# Point this frontend at a running backend with the API_URL variable:
+#
+#     API_URL=http://localhost:8000 docker compose up --build
+#
+# On Windows PowerShell:
+#
+#     $env:API_URL="http://localhost:8000"; docker compose up --build
+
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        # NEXT_PUBLIC_* values are baked into the browser bundle at build time, so this has to be
+        # a build arg rather than only a runtime environment variable.
+        NEXT_PUBLIC_API_BASE_URL: ${API_URL:-http://localhost:8000/api}
+    image: supportai-frontend:local
+    container_name: supportai-frontend
+    restart: unless-stopped
+    ports:
+      # Host port 3000 by default; override with FRONTEND_PORT=3001 docker compose up --build
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      # Also set at runtime so server-side code and the served bundle agree on the same value.
+      NEXT_PUBLIC_API_BASE_URL: ${API_URL:-http://localhost:8000/api}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s

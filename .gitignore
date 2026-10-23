@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+.env.local
+*.log
+.DS_Store
+
+# Playwright run artifacts (HTML report + failure screenshots/traces/videos)
+playwright-report/
+test-results/
+blob-report/
+
+# TypeScript build info (generated)
+tsconfig.tsbuildinfo

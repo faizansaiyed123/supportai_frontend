@@ -1,0 +1,42 @@
+# Keep the build context small and stop host-only state from leaking into the image.
+# Anything excluded here is restored by the `COPY` steps in Dockerfile, so this must not
+# exclude files the build actually reads (package-lock.json, next.config.ts, src/, tsconfig.json).
+
+# Dependencies and build output - reinstalled/restored inside the image.
+node_modules
+.next
+out
+
+# Test and tooling artifacts.
+coverage
+playwright-report
+test-results
+blob-report
+.vitest
+
+# Local env files. Only NEXT_PUBLIC_* values matter and they are passed as build args from
+# docker-compose.yml; baking a developer's .env.local into an image would leak machine-specific
+# API URLs into every build.
+.env
+.env.local
+.env.*.local
+
+# VCS / editor / OS noise.
+.git
+.gitignore
+.github
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Logs.
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Docs and Docker files themselves are not needed to build the app.
+README.md
+Dockerfile
+docker-compose.yml
+.dockerignore
