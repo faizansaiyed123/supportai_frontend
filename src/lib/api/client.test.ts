@@ -103,4 +103,33 @@ describe("apiFetch", () => {
     await expect(call).rejects.toBeInstanceOf(ApiError);
     await expect(call).rejects.toMatchObject({ status: 502 });
   });
+  
+  it("returns a controlled 503 without making a request when the production API URL is missing", async () => {
+    const configuredUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "");
+    vi.resetModules();
+
+    try {
+      const clientWithoutApi = await import("./client");
+      await expect(
+        clientWithoutApi.apiFetch("/auth/login", {
+          method: "POST",
+          body: {},
+          skipAuthRetry: true,
+        }),
+      ).rejects.toMatchObject({
+        status: 503,
+        detail: "The SupportAI API is not configured for this deployment. Please try again later.",
+      });
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      if (configuredUrl === undefined) {
+        vi.unstubAllEnvs();
+      } else {
+        vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", configuredUrl);
+      }
+      vi.resetModules();
+    }
+  });
+
 });
