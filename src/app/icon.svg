@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="supportai-bg" x1="8" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="17" fill="url(#supportai-bg)"/>
+  <path d="M17 25.5C17 19.7 21.7 15 27.5 15H37C42.8 15 47.5 19.7 47.5 25.5V31.5C47.5 37.3 42.8 42 37 42H30L21 48V40.1C18.5 38.2 17 35.2 17 31.9V25.5Z" stroke="white" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M32.5 21.5L34.4 26.4L39.5 28L34.4 29.9L32.5 35L30.6 29.9L25.5 28L30.6 26.4L32.5 21.5Z" fill="white"/>
+  <circle cx="43.5" cy="14.5" r="4.5" fill="#BAE6FD" stroke="#2563EB" stroke-width="1.5"/>
+</svg>
