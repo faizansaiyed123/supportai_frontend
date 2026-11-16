@@ -21,7 +21,14 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
+  } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema), defaultValues: { organization_slug: "demo" } });
+
+  const demoAccounts = [
+    ["Owner", "owner@supportai.demo"],
+    ["Admin", "admin@supportai.demo"],
+    ["Agent", "agent@supportai.demo"],
+    ["Viewer", "viewer@supportai.demo"],
+  ] as const;
 
   const onSubmit = async (values: LoginFormValues) => {
     setFormError(null);
@@ -80,6 +87,37 @@ export default function LoginPage() {
             Sign in
           </Button>
         </form>
+
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-900">Interactive demo</p>
+          <p className="mt-1 text-xs text-amber-800">Use organization <strong>demo</strong>. Password for every demo account: <strong>demo1234</strong>.</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {demoAccounts.map(([label, email]) => (
+              <button
+                key={email}
+                type="button"
+                onClick={() => {
+                  const form = document.querySelector("form");
+                  const emailInput = form?.querySelector('input[type="email"]') as HTMLInputElement | null;
+                  const passwordInput = form?.querySelector('input[type="password"]') as HTMLInputElement | null;
+                  const slugInput = form?.querySelector('input[name="organization_slug"]') as HTMLInputElement | null;
+                  if (emailInput && passwordInput && slugInput) {
+                    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+                    setter?.call(emailInput, email);
+                    setter?.call(passwordInput, "demo1234");
+                    setter?.call(slugInput, "demo");
+                    emailInput.dispatchEvent(new Event("input", { bubbles: true }));
+                    passwordInput.dispatchEvent(new Event("input", { bubbles: true }));
+                    slugInput.dispatchEvent(new Event("input", { bubbles: true }));
+                  }
+                }}
+                className="rounded-md border border-amber-300 bg-white px-2.5 py-2 text-xs font-medium text-amber-950 hover:bg-amber-100"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <p className="text-center text-sm text-neutral-500">
           Don&apos;t have an organization yet?{" "}

@@ -1,0 +1,54 @@
+name: SupportAI Frontend Demo CI
+
+on:
+  push:
+    branches: [demo]
+  pull_request:
+    branches: [demo]
+
+permissions:
+  contents: read
+
+jobs:
+  demo:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out demo branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Start demo frontend
+        run: |
+          nohup npm start > /tmp/supportai-demo-web.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3000/login >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/supportai-demo-web.log
+          exit 1
+
+      - name: Run demo browser checks
+        run: npx playwright test tests/e2e/demo.spec.ts
+
+      - name: Upload browser logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: supportai-frontend-demo-logs
+          path: /tmp/supportai-demo-web.log
+          if-no-files-found: ignore
+          retention-days: 7

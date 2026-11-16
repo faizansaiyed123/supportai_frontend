@@ -1,5 +1,7 @@
 import type { AccessTokenResponse, ApiErrorBody } from "@/types/api";
 
+const DEMO_MODE = true;
+
 // Keep the localhost default for local development only. A production deployment without an
 // API URL should still render the frontend and report a clear, controlled error for API actions.
 const API_BASE_URL = (
@@ -103,6 +105,10 @@ export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
  * onAuthExpired() so the app can redirect to /login - it does NOT loop.
  */
 export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
+  if (DEMO_MODE) {
+    const { demoRequest } = await import("@/lib/demo/api");
+    return demoRequest<T>(path, options);
+  }
   if (!API_BASE_URL) {
     throw new ApiError(503, API_NOT_CONFIGURED_MESSAGE);
   }
