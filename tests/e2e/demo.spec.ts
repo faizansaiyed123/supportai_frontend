@@ -18,7 +18,7 @@ test('owner can use the grounded SupportAI conversation demo', async ({ page }) 
   await question.fill('How long do I have to request a refund?');
   await page.getByRole('button', { name: 'Ask', exact: true }).click();
 
-  await expect(page.getByText(/Eligible purchases can be refunded within 30 days/i)).toBeVisible();
+  await expect(page.getByText(/Eligible purchases can be refunded within 30 days/i).last()).toBeVisible();
   await expect(page.getByText('Refund policy > Eligibility')).toBeVisible();
 });
 
@@ -36,7 +36,7 @@ test('agent can manage a support ticket in the demo', async ({ page }) => {
   await expect(page.getByText('Status updated.')).toBeVisible();
 
   await page.getByRole('textbox', { name: 'Internal note' }).fill('Demo review completed.');
-  await page.getByRole('button', { name: /Send/i }).click();
+  await page.getByRole('button', { name: 'Send internal note' }).click();
 
   await expect(page.getByText('Demo review completed.')).toBeVisible();
 });

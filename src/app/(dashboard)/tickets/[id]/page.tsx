@@ -134,7 +134,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
                   placeholder="Add an internal note (not visible to the customer)..."
                   className="min-h-16 flex-1"
                 />
-                <Button type="submit" size="sm" isLoading={addNote.isPending} className="self-end">
+                <Button type="submit" size="sm" aria-label="Send internal note" isLoading={addNote.isPending} className="self-end">
                   <Send className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </form>
