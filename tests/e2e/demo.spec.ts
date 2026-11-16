@@ -11,7 +11,7 @@ test('owner can use the grounded SupportAI conversation demo', async ({ page }) 
   await expect(page.getByText('Knowledge base articles')).toBeVisible();
 
   await page.goto('/conversations/conversation-1');
-  await expect(page.getByRole('heading', { name: /Conversation conversation-1/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Conversation conversa/i })).toBeVisible();
 
   const question = page.getByRole('textbox', { name: 'Ask a question' });
   await question.fill('How long do I have to request a refund?');
