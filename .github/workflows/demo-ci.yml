@@ -1,4 +1,4 @@
-name: SupportAI Frontend Demo CI
+name: SupportAI Frontend Demo CI # demo branch only
 
 on:
   push:
