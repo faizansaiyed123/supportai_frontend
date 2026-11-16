@@ -25,7 +25,7 @@ const USERS: (Row & { password: string })[] = [
 const now = () => new Date().toISOString();
 const days = (offset:number) => new Date(Date.now() + offset * 86400000).toISOString();
 const clone = <T,>(v:T):T => JSON.parse(JSON.stringify(v));
-const makeId = (prefix:string) => \`\${prefix}-\${Math.random().toString(36).slice(2,10)}\`;
+const makeId = (prefix:string) => `${prefix}-${Math.random().toString(36).slice(2,10)}`;
 
 function seed():Store {
   const customers = [
@@ -75,7 +75,7 @@ function seed():Store {
   ];
 
   const memberships = USERS.map((u) => ({
-    id:\`membership-\${u.id}\`, user_id:u.id, email:u.email, full_name:u.full_name,
+    id:`membership-${u.id}`, user_id:u.id, email:u.email, full_name:u.full_name,
     role:u.role, status:"active", created_at:days(-30),
   }));
 
@@ -132,11 +132,11 @@ function safeUser(user:Row) {
 
 function authToken(user:Row) {
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(TOKEN_KEY, \`demo-access:\${encodeURIComponent(user.id)}\`);
+    window.localStorage.setItem(TOKEN_KEY, `demo-access:${encodeURIComponent(user.id)}`);
   }
   // AuthContext only decodes this payload for UI state; the demo transport remains the source of truth.
   const payload = btoa(JSON.stringify({ sub:user.id, org_id:DEMO_ORG_ID, role:user.role, exp:Math.floor(Date.now()/1000)+1800 }));
-  return \`demo.\${payload}.demo\`;
+  return `demo.${payload}.demo`;
 }
 
 function find(collection:string,id:string) {
@@ -346,5 +346,5 @@ export async function demoRequest<T>(path:string, options:DemoRequestOptions={})
 export async function demoDocument(path:string):Promise<string> {
   requireUser();
   const label = path.split("/").pop() ?? "SupportAI demo";
-  return \`<!doctype html><html><body style="font-family:Arial,sans-serif;max-width:720px;margin:48px auto;color:#1f2937"><h1>SupportAI demo document</h1><p>Sample output for <strong>\${label}</strong>.</p><p>This is a browser-only demo. No real customer message, email, or external AI provider was used.</p></body></html>\`;
+  return `<!doctype html><html><body style="font-family:Arial,sans-serif;max-width:720px;margin:48px auto;color:#1f2937"><h1>SupportAI demo document</h1><p>Sample output for <strong>${label}</strong>.</p><p>This is a browser-only demo. No real customer message, email, or external AI provider was used.</p></body></html>`;
 }
