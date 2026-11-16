@@ -11,7 +11,8 @@ test('owner can use the grounded SupportAI conversation demo', async ({ page }) 
   await expect(page.getByText('Knowledge base articles')).toBeVisible();
 
   await page.getByRole('link', { name: 'Conversations', exact: true }).click();
-  await page.getByRole('button', { name: /Conversation conversation-1/i }).click();
+  await page.getByRole('button', { name: /Conversation conversa/i }).click();
+  await expect(page).toHaveURL(/\/conversations\/conversation-1$/);
 
   const question = page.getByRole('textbox', { name: 'Ask a question' });
   await question.fill('How long do I have to request a refund?');
@@ -29,7 +30,7 @@ test('agent can manage a support ticket in the demo', async ({ page }) => {
   await page.getByRole('link', { name: 'Tickets', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Tickets' })).toBeVisible();
   await page.getByText('Refund request for duplicate charge').click();
-
+  await expect(page).toHaveURL(/\/tickets\/ticket-1$/);
   await expect(page.getByRole('heading', { name: 'Refund request for duplicate charge' })).toBeVisible();
   await page.getByRole('combobox', { name: 'Update status' }).selectOption('resolved');
   await expect(page.getByText('Status updated.')).toBeVisible();

@@ -237,6 +237,7 @@ export async function demoRequest<T>(path:string, options:DemoRequestOptions={})
   }
 
   const user = requireUser();
+  path = path.replace(/^\/orgs\/[^/]+(?=\/|$)/, "/orgs/"+DEMO_ORG_ID);
 
   if (path === "/orgs/"+DEMO_ORG_ID+"/customers" && method === "GET") {
     return { customers:clone(s.customers) } as T;
