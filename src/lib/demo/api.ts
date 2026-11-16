@@ -84,6 +84,7 @@ function seed():Store {
 }
 
 let cached:Store|null = null;
+let activeDemoUser:Row|null = null;
 
 function store():Store {
   if (cached) return cached;
@@ -104,6 +105,7 @@ function persist() {
 }
 
 export function resetDemoData() {
+  activeDemoUser = null;
   cached = seed();
   if (typeof window !== "undefined") {
     window.localStorage.setItem(STORE_KEY, JSON.stringify(cached));
@@ -112,6 +114,7 @@ export function resetDemoData() {
 }
 
 function currentUser():Row|null {
+  if (activeDemoUser) return activeDemoUser;
   if (typeof window === "undefined") return null;
   const token = window.localStorage.getItem(TOKEN_KEY) ?? "";
   if (!token.startsWith("demo-access:")) return null;
@@ -132,6 +135,7 @@ function safeUser(user:Row) {
 }
 
 function authToken(user:Row) {
+  activeDemoUser = user;
   if (typeof window !== "undefined") {
     window.localStorage.setItem(TOKEN_KEY, `demo-access:${encodeURIComponent(user.id)}`);
   }
@@ -238,6 +242,15 @@ export async function demoRequest<T>(path:string, options:DemoRequestOptions={})
 
   const user = requireUser();
   path = path.replace(/^\/orgs\/[^/]+(?=\/|$)/, "/orgs/"+DEMO_ORG_ID);
+  const normalizedOrgPath = path.replace(/^\/orgs\/[^/]+(?=\/|$)/, "/orgs/"+DEMO_ORG_ID);
+  path = normalizedOrgPath;
+  if (method === "GET" && /^\/orgs\/[^/]+\/conversations$/.test(path)) {
+    return { conversations:clone(s.conversations) } as T;
+  }
+  if (method === "GET" && /^\/orgs\/[^/]+\/tickets$/.test(path)) {
+    const status = new URLSearchParams(path.split("?")[1] ?? "").get("status");
+    return { tickets:clone(status ? s.tickets.filter((t) => t.status === status) : s.tickets) } as T;
+  }
 
   if (path === "/orgs/"+DEMO_ORG_ID+"/customers" && method === "GET") {
     return { customers:clone(s.customers) } as T;
