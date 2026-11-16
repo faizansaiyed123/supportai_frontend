@@ -41,6 +41,9 @@ jobs:
           cat /tmp/supportai-demo-web.log
           exit 1
 
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Run demo browser checks
         run: npx playwright test tests/e2e/demo.spec.ts
 
