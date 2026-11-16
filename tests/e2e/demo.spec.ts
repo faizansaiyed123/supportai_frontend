@@ -11,7 +11,7 @@ test('owner can use the grounded SupportAI conversation demo', async ({ page }) 
   await expect(page.getByText('Knowledge base articles')).toBeVisible();
 
   await page.getByRole('link', { name: 'Conversations', exact: true }).click();
-  await page.getByRole('button', { name: /Conversation conversa/i }).click();
+  await page.getByRole('button', { name: /Conversation conversa/i }).first().click();
   await expect(page).toHaveURL(/\/conversations\/conversation-1$/);
 
   const question = page.getByRole('textbox', { name: 'Ask a question' });

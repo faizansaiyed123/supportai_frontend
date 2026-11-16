@@ -251,6 +251,20 @@ export async function demoRequest<T>(path:string, options:DemoRequestOptions={})
     const status = new URLSearchParams(path.split("?")[1] ?? "").get("status");
     return { tickets:clone(status ? s.tickets.filter((t) => t.status === status) : s.tickets) } as T;
   }
+  const demoConversationMessages = path.match(/^\/orgs\/[^/]+\/conversations\/([^/]+)\/messages$/);
+  if (demoConversationMessages && method === "GET") {
+    return { messages:clone(s.messages.filter((m) => m.conversation_id === demoConversationMessages[1])) } as T;
+  }
+  const demoTicketDetail = path.match(/^\/orgs\/[^/]+\/tickets\/([^/]+)$/);
+  if (demoTicketDetail && method === "GET") {
+    const ticket=find("tickets", demoTicketDetail[1]);
+    if (!ticket) throw new ApiError(404, "Ticket not found");
+    return clone(ticket) as T;
+  }
+  const demoTicketNotes = path.match(/^\/orgs\/[^/]+\/tickets\/([^/]+)\/notes$/);
+  if (demoTicketNotes && method === "GET") {
+    return { notes:clone(s.ticketNotes.filter((n) => n.ticket_id === demoTicketNotes[1])) } as T;
+  }
 
   if (path === "/orgs/"+DEMO_ORG_ID+"/customers" && method === "GET") {
     return { customers:clone(s.customers) } as T;
